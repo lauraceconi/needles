@@ -15,6 +15,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'diarios')
 
 
+#class DiarioExemploSerializer(serializers.ModelSerializer):
+#    """
+#    Serializer de exemplo
+#    """
+#    autor = serializers.ReadOnlyField(source='autor.username')
+#    locais_de_interesse = LocalDeInteresseSerializer(many=True, read_only=True)
+#
+#    class Meta:
+#        model = Diario
+#        fields = ('id', 'titulo', 'autor', 'locais_de_interesse')
+
+
 class CadastroUsuariosSerializer(serializers.ModelSerializer):
     """
     Serializer de cadastro de usuário
@@ -28,19 +40,24 @@ class CadastroUsuariosSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name')
 
 
 class LocalDeInteresseSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalDeInteresse
-        fields = ('nome', 'descricao', 'latitude', 'longitude')
+        fields = ('id', 'nome', 'descricao', 'latitude', 'longitude')
 
 
 class DiarioSerializer(serializers.ModelSerializer):
-    autor = serializers.ReadOnlyField(source='autor.username')
+    class Meta:
+        model = Diario
+        fields = ('id', 'titulo')
+
+
+class DetalheDiarioSerializer(serializers.ModelSerializer):
     locais_de_interesse = LocalDeInteresseSerializer(many=True, read_only=True)
 
     class Meta:
         model = Diario
-        fields = ('id', 'titulo', 'autor', 'locais_de_interesse')
+        fields = ('id', 'titulo', 'locais_de_interesse')

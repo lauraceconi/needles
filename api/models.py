@@ -20,7 +20,8 @@ class Diario(models.Model):
 class LocalDeInteresse(models.Model):
     diario = models.ForeignKey(Diario,
                                on_delete=models.CASCADE,
-                               verbose_name='Diário')
+                               verbose_name='Diário',
+                               related_name='locais_de_interesse')
     nome = models.CharField('Nome', max_length=100)
     descricao = models.TextField('Descrição', blank=True, null=True)
     latitude = models.FloatField('Latitude', blank=True, null=True)
