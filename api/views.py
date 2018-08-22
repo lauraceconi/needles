@@ -3,13 +3,16 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from api.models import Diario
+from rest_framework import viewsets, permissions, mixins, status
+from rest_framework.decorators import action, list_route
+from rest_framework.response import Response
+from api.models import Diario, LocalDeInteresse
 from api.permissions import IsOwnerOrReadOnly
 from api.serializers import (DiarioSerializer, 
                              UserSerializer, 
                              CadastroUsuariosSerializer,
+                             LocalDeInteresseSerializer,
                              DetalheDiarioSerializer)
-from rest_framework import viewsets, permissions, mixins
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -43,6 +46,23 @@ class DiarioViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return self.list_serializer_class \
             if not self.pk else self.detail_serializer_class
+
+    @action(methods=['POST'], detail=True, url_path='cria-local')
+    def cria_local(self, request, pk=None):
+        diario = Diario.objects.filter(autor=request.user,
+                                       id=pk).first()
+        if diario:
+            serializer = LocalDeInteresseSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(diario=diario)
+            resposta = 'Local de Interesse criado com sucesso!'
+            status_resposta = status.HTTP_200_OK
+        else:
+            resposta = 'Você não tem permissão para criar ' \
+                       'um Local de Interesse neste Diário.'
+            status_resposta = status.HTTP_400_BAD_REQUEST
+        
+        return Response(resposta, status=status_resposta)
 
 
 class CadastroViewSet(mixins.CreateModelMixin,

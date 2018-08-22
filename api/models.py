@@ -10,7 +10,9 @@ from rest_framework.authtoken.models import Token
 
 
 class Diario(models.Model):
-    autor = models.ForeignKey('auth.User', related_name='diarios', on_delete=models.CASCADE)
+    autor = models.ForeignKey('auth.User', 
+                              related_name='diarios', 
+                              on_delete=models.CASCADE)
     titulo = models.CharField(max_length=100)
 
     def __unicode__(self):
