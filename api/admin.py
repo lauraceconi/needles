@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from api.models import Diario, LocalDeInteresse
+from api.models import Diario, LocalDeInteresse, Relacionamento
 
 # Register your models here.
 
@@ -15,3 +15,8 @@ class LocalDeInteresseAdmin(admin.ModelAdmin):
     model = LocalDeInteresse
 
 admin.site.register(LocalDeInteresse, LocalDeInteresseAdmin)
+
+class RelacionamentoAdmin(admin.ModelAdmin):
+    model = Relacionamento
+
+admin.site.register(Relacionamento, RelacionamentoAdmin)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from api.models import Diario, LocalDeInteresse
+from api.models import Diario, LocalDeInteresse, Relacionamento
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,9 +34,6 @@ class CadastroUsuariosSerializer(serializers.ModelSerializer):
     - Precisa incluir foto
     - Tentar mandar o nome completo e dps separar aqui
     """
-    #username = serializers.SerializerMethodField()
-    #def get_username(self, obj):
-    #    return obj.first_name[0] + obj.last_name
 
     class Meta:
         model = User
@@ -61,3 +58,12 @@ class DetalheDiarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diario
         fields = ('id', 'titulo', 'locais_de_interesse')
+
+
+class RelacionamentoSerializer(serializers.ModelSerializer):
+    #seguidores = serializers.SerializerMethodField()
+    #seguindo = serializers.SerializerMethodField()
+    #def seguidores(self, obj):
+
+    class Meta:
+        model = Relacionamento

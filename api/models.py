@@ -8,6 +8,26 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
+class Classificacao(models.Model):
+    descricao = models.CharField('Descricao', max_length=30)
+
+    def __unicode__(self):
+        return self.descricao
+
+
+class Relacionamento(models.Model):
+    usuario = models.ForeignKey(User)
+    seguindo = models.ForeignKey(User, related_name='seguindo')
+    classificacao = models.ForeignKey(Classificacao)
+
+    def __unicode__(self):
+        return self.usuario.username + '/' + \
+               self.seguindo.username + \
+               ' - ' + self.classificacao.descricao
+    
+    class Meta:
+        unique_together = ('usuario', 'seguindo')
+
 
 class Diario(models.Model):
     autor = models.ForeignKey('auth.User', 
@@ -32,9 +52,6 @@ class LocalDeInteresse(models.Model):
 
     def __unicode__(self):
         return self.nome
-
-
-    
 
 
 @receiver(post_save, sender=User)

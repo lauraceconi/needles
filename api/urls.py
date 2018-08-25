@@ -10,6 +10,7 @@ router = DefaultRouter()
 router.register(r'cadastro', views.CadastroViewSet, base_name='cadastro')
 router.register(r'usuarios', views.UserViewSet)
 router.register(r'diarios', views.DiarioViewSet)
+router.register(r'relacionamentos', views.RelacionamentoViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

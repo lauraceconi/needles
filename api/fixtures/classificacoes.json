@@ -1,0 +1,37 @@
+[
+    {
+      "model": "api.classificacao",
+      "pk": 1,
+      "fields": {
+        "descricao": "Amigo"
+      }
+    },
+    {
+      "model": "api.classificacao",
+      "pk": 2,
+      "fields": {
+        "descricao": "Melhor amigo"
+      }
+    },
+    {
+      "model": "api.classificacao",
+      "pk": 3,
+      "fields": {
+        "descricao": "Conhecido"
+      }
+    },
+    {
+      "model": "api.classificacao",
+      "pk": 4,
+      "fields": {
+        "descricao": "Não conheço"
+      }
+    },
+    {
+      "model": "api.classificacao",
+      "pk": 5,
+      "fields": {
+        "descricao": "Família"
+      }
+    }
+  ]
