@@ -60,10 +60,10 @@ class DetalheDiarioSerializer(serializers.ModelSerializer):
         fields = ('id', 'titulo', 'locais_de_interesse')
 
 
+
 class RelacionamentoSerializer(serializers.ModelSerializer):
-    #seguidores = serializers.SerializerMethodField()
-    #seguindo = serializers.SerializerMethodField()
-    #def seguidores(self, obj):
+    classificacao_id = serializers.IntegerField()
 
     class Meta:
         model = Relacionamento
+        fields = ('classificacao_id',)

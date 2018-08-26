@@ -35,21 +35,37 @@ class RelacionamentoViewSet(viewsets.ModelViewSet):
     queryset = Relacionamento.objects
     serializer_class = RelacionamentoSerializer
     list_serializer_class = RelacionamentoSerializer
+    #update_serializer_class = RelacionamentoUpdateSerializer
     permission_classes = (permissions.AllowAny,)
 
-    @action(methods=['POST'], detail=True, url_path='seguir')
+    @action(methods=['POST', 'PATCH'], 
+            detail=True, 
+            url_path='seguir', 
+            permission_classes=[permissions.IsAuthenticated])
     def seguir(self, request, pk=None):
-        usuario_seguir = get_object_or_404(User, id=pk)
-        try:
+        relacao = Relacionamento.objects.filter(usuario=request.user,
+                                                seguindo=pk).first()
+        if relacao and request.method == 'PATCH':
+            serializer = self.serializer_class(data=request.data, partial=True)
+            if serializer.is_valid():
+                relacao.classificacao_id = serializer.data['classificacao_id']
+                relacao.save()
+                resposta = 'Sucesso! A classificação foi modificada. '
+                status_resposta = status.HTTP_200_OK
+            else:
+                resposta = serializer.errors
+                status_resposta = status.HTTP_400_BAD_REQUEST
+        elif not relacao and request.method == 'POST':
+            usuario_seguir = get_object_or_404(User, id=pk)
             self.queryset.create(
                 usuario=request.user,
                 seguindo=usuario_seguir,
                 classificacao_id=1
             )
             resposta = 'Sucesso! Agora você está seguindo ' \
-                       '%s' % usuario_seguir.get_full_name()
+                    '%s' % usuario_seguir.get_full_name()
             status_resposta = status.HTTP_200_OK
-        except IntegrityError:
+        else:
             resposta = 'Você já está seguindo esta pessoa.'
             status_resposta = status.HTTP_400_BAD_REQUEST
         
@@ -63,7 +79,7 @@ class DiarioViewSet(viewsets.ModelViewSet):
     queryset = Diario.objects
     list_serializer_class = DiarioSerializer
     detail_serializer_class = DetalheDiarioSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
         serializer.save(autor=self.request.user)
@@ -82,17 +98,14 @@ class DiarioViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=True, url_path='cria-local')
     def cria_local(self, request, pk=None):
-        diario = Diario.objects.filter(autor=request.user,
-                                       id=pk).first()
-        if diario:
-            serializer = LocalDeInteresseSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(diario=diario)
+        diario = self.get_object()
+        serializer = LocalDeInteresseSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(diario=diario)
             resposta = 'Local de Interesse criado com sucesso!'
             status_resposta = status.HTTP_200_OK
         else:
-            resposta = 'Você não tem permissão para criar ' \
-                       'um Local de Interesse neste Diário.'
+            resposta = serializer.errors
             status_resposta = status.HTTP_400_BAD_REQUEST
         
         return Response(resposta, status=status_resposta)
@@ -108,7 +121,6 @@ class CadastroViewSet(viewsets.ModelViewSet):
     serializer_class = CadastroUsuariosSerializer
 
     def perform_create(request, serializer):
-        #username = serializer.validated_data['first_name'][0] + serializer.validated_data['last_name']
         instance = serializer.save()
         instance.set_password(instance.password)
         instance.save()

@@ -9,6 +9,9 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 class Classificacao(models.Model):
+    """
+    Classificação da relação entre os usuários
+    """
     descricao = models.CharField('Descricao', max_length=30)
 
     def __unicode__(self):
@@ -16,6 +19,9 @@ class Classificacao(models.Model):
 
 
 class Relacionamento(models.Model):
+    """
+    Relacionamento entre os usuários (seguindo/seguidores)
+    """
     usuario = models.ForeignKey(User)
     seguindo = models.ForeignKey(User, related_name='seguindo')
     classificacao = models.ForeignKey(Classificacao)
@@ -30,6 +36,9 @@ class Relacionamento(models.Model):
 
 
 class Diario(models.Model):
+    """
+    Representação de um Diário de Viagens
+    """
     autor = models.ForeignKey('auth.User', 
                               related_name='diarios', 
                               on_delete=models.CASCADE)
@@ -40,6 +49,10 @@ class Diario(models.Model):
 
 
 class LocalDeInteresse(models.Model):
+    """
+    Representação de um Local de Interesse,
+    que é associado a um Diário
+    """
     diario = models.ForeignKey(Diario,
                                on_delete=models.CASCADE,
                                verbose_name='Diário',
