@@ -12,32 +12,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'diarios')
-
-
-#class DiarioExemploSerializer(serializers.ModelSerializer):
-#    """
-#    Serializer de exemplo
-#    """
-#    autor = serializers.ReadOnlyField(source='autor.username')
-#    locais_de_interesse = LocalDeInteresseSerializer(many=True, read_only=True)
-#
-#    class Meta:
-#        model = Diario
-#        fields = ('id', 'titulo', 'autor', 'locais_de_interesse')
+        fields = ('id', 'username')
 
 
 class CadastroUsuariosSerializer(serializers.ModelSerializer):
     """
-    Serializer de cadastro de usuário
-    - Username deve ser criado automaticamente, estilo UCS
     - Precisa incluir foto
-    - Tentar mandar o nome completo e dps separar aqui
     """
-
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name')
+        fields = ('id', 'email', 'password', 'first_name', 'last_name')
 
 
 class LocalDeInteresseSerializer(serializers.ModelSerializer):
@@ -60,10 +44,25 @@ class DetalheDiarioSerializer(serializers.ModelSerializer):
         fields = ('id', 'titulo', 'locais_de_interesse')
 
 
-
 class RelacionamentoSerializer(serializers.ModelSerializer):
     classificacao_id = serializers.IntegerField()
 
     class Meta:
         model = Relacionamento
         fields = ('classificacao_id',)
+
+
+class PerfilSerializer(serializers.ModelSerializer):
+    seguindo = serializers.SerializerMethodField()
+    seguidores = serializers.SerializerMethodField()
+
+    def get_seguindo(self, obj):
+        return obj.relacionamento_set.count()
+
+    def get_seguidores(self, obj):
+        return Relacionamento.objects.filter(seguindo=obj).count()
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 
+                  'email', 'seguindo', 'seguidores')

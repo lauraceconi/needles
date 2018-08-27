@@ -16,7 +16,8 @@ from api.serializers import (DiarioSerializer,
                              CadastroUsuariosSerializer,
                              LocalDeInteresseSerializer,
                              DetalheDiarioSerializer,
-                             RelacionamentoSerializer)
+                             RelacionamentoSerializer,
+                             PerfilSerializer)
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -24,7 +25,35 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    detail_serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
+
+
+class CadastroViewSet(viewsets.ModelViewSet):
+    """
+    Viewset para cadastrar um novo usuário
+    """
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = CadastroUsuariosSerializer
+
+    def perform_create(request, serializer):
+        # Faz o username ser igual ao email
+        # para facilitar o login, que requer username
+        username = serializer.validated_data['email']
+        instance = serializer.save(username=username)
+        instance.set_password(instance.password)
+        instance.save()
+
+
+class PerfilViewSet(viewsets.ViewSet):
+    queryset = User.objects
+    serializer_class = PerfilSerializer
+    list_serializer_class = PerfilSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def list(self, request):
+        return Response(self.list_serializer_class(instance=request.user).data,
+                        status=status.HTTP_200_OK)
 
 
 class RelacionamentoViewSet(viewsets.ModelViewSet):
@@ -109,20 +138,4 @@ class DiarioViewSet(viewsets.ModelViewSet):
             status_resposta = status.HTTP_400_BAD_REQUEST
         
         return Response(resposta, status=status_resposta)
-
-
-#class CadastroViewSet(mixins.CreateModelMixin,
-#                      viewsets.GenericViewSet):
-class CadastroViewSet(viewsets.ModelViewSet):
-    """
-    Viewset para cadastrar um novo usuário
-    """
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = CadastroUsuariosSerializer
-
-    def perform_create(request, serializer):
-        instance = serializer.save()
-        instance.set_password(instance.password)
-        instance.save()
-
 
