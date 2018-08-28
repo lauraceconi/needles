@@ -1,18 +1,36 @@
 # -*- coding: utf-8 -*-
-from django.contrib.auth.models import User
 from rest_framework import serializers
-from api.models import Diario, LocalDeInteresse, Relacionamento
+from api.models import (Usuario,
+                        Grupo,
+                        Diario, 
+                        LocalDeInteresse, 
+                        Relacionamento,
+                        Recomendacao)
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UsuarioSerializer(serializers.ModelSerializer):
     """
     Serializer de exemplo
     """
     diarios = serializers.PrimaryKeyRelatedField(many=True, queryset=Diario.objects.all())
 
     class Meta:
-        model = User
-        fields = ('id', 'username')
+        model = Usuario
+        fields = ('id', 'username', 'diarios')
+
+
+class GrupoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Grupo
+        fields = ('id', 'name')
+
+
+class RecomendacaoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recomendacao
+        fields = ('id', 'descricao', 'grupo')
 
 
 class CadastroUsuariosSerializer(serializers.ModelSerializer):
@@ -20,11 +38,12 @@ class CadastroUsuariosSerializer(serializers.ModelSerializer):
     - Precisa incluir foto
     """
     class Meta:
-        model = User
+        model = Usuario
         fields = ('id', 'email', 'password', 'first_name', 'last_name')
 
 
 class LocalDeInteresseSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = LocalDeInteresse
         fields = ('id', 'nome', 'descricao', 'latitude', 'longitude')
@@ -63,6 +82,6 @@ class PerfilSerializer(serializers.ModelSerializer):
         return Relacionamento.objects.filter(seguindo=obj).count()
 
     class Meta:
-        model = User
+        model = Usuario
         fields = ('username', 'first_name', 'last_name', 
                   'email', 'seguindo', 'seguidores')

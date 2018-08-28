@@ -1,32 +1,63 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, permissions, mixins, status
 from rest_framework.decorators import action, list_route
 from rest_framework.response import Response
-from api.models import (Diario, 
+from api.models import (Usuario,
+                        Grupo,
+                        Diario, 
                         LocalDeInteresse,
-                        Relacionamento)
+                        Relacionamento,
+                        Recomendacao)
 from api.permissions import IsOwnerOrReadOnly
-from api.serializers import (DiarioSerializer, 
-                             UserSerializer, 
+from api.serializers import (UsuarioSerializer, 
+                             GrupoSerializer,
+                             DiarioSerializer,
                              CadastroUsuariosSerializer,
                              LocalDeInteresseSerializer,
                              DetalheDiarioSerializer,
                              RelacionamentoSerializer,
-                             PerfilSerializer)
+                             PerfilSerializer,
+                             RecomendacaoSerializer)
 
-class UserViewSet(viewsets.ModelViewSet):
+class UsuarioViewSet(viewsets.ModelViewSet):
     """
     Viewset para listar todos os usuários (viewset de exemplo)
     """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    detail_serializer_class = UserSerializer
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
+    detail_serializer_class = UsuarioSerializer
     permission_classes = (permissions.AllowAny,)
+
+
+class GrupoViewSet(viewsets.ModelViewSet):
+    """
+    Viewset para criar um grupo
+    """
+    queryset = Grupo.objects.all()
+    serializer_class = GrupoSerializer
+    detail_serializer_class = GrupoSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        serializer.save(dono=self.request.user.usuario)
+
+
+class RecomendacaoViewSet(viewsets.ModelViewSet):
+    """
+    Viewset para cadastro de uma recomendação
+    """
+    queryset = Recomendacao.objects
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = RecomendacaoSerializer
+
+    def perform_create(self, serializer):
+        grupo = serializer.get('grupo', None)
+        serializer.save(autor=self.request.user.usuario,
+                        grupo=grupo)
 
 
 class CadastroViewSet(viewsets.ModelViewSet):
@@ -46,7 +77,7 @@ class CadastroViewSet(viewsets.ModelViewSet):
 
 
 class PerfilViewSet(viewsets.ViewSet):
-    queryset = User.objects
+    queryset = Usuario.objects
     serializer_class = PerfilSerializer
     list_serializer_class = PerfilSerializer
     permission_classes = (permissions.AllowAny,)
@@ -85,7 +116,7 @@ class RelacionamentoViewSet(viewsets.ModelViewSet):
                 resposta = serializer.errors
                 status_resposta = status.HTTP_400_BAD_REQUEST
         elif not relacao and request.method == 'POST':
-            usuario_seguir = get_object_or_404(User, id=pk)
+            usuario_seguir = get_object_or_404(Usuario, id=pk)
             self.queryset.create(
                 usuario=request.user,
                 seguindo=usuario_seguir,
@@ -111,7 +142,7 @@ class DiarioViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
-        serializer.save(autor=self.request.user)
+        serializer.save(autor=self.request.user.usuario)
 
     def dispatch(self, request, pk=None):
         self.pk = pk
@@ -119,7 +150,7 @@ class DiarioViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super(DiarioViewSet, self).get_queryset()
-        return queryset.filter(autor=self.request.user)
+        return queryset.filter(autor=self.request.user.usuario)
 
     def get_serializer_class(self):
         return self.list_serializer_class \

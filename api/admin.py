@@ -2,9 +2,23 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from api.models import Diario, LocalDeInteresse, Relacionamento
+from api.models import (Usuario, 
+                        Grupo, 
+                        Diario, 
+                        LocalDeInteresse, 
+                        Relacionamento)
 
-# Register your models here.
+class UsuarioAdmin(admin.ModelAdmin):
+    model = Usuario
+    list_display = ('username', 'email', 'first_name', 'last_name')
+
+admin.site.register(Usuario, UsuarioAdmin)
+
+class GrupoAdmin(admin.ModelAdmin):
+    model = Grupo
+    list_display = ('name', 'dono')
+
+admin.site.register(Grupo, GrupoAdmin)
 
 class DiarioAdmin(admin.ModelAdmin):
     model = Diario
