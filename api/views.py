@@ -12,9 +12,10 @@ from api.models import (Usuario,
                         LocalDeInteresse,
                         Relacionamento,
                         Recomendacao)
-from api.permissions import IsOwnerOrReadOnly
+from api.permissions import IsOwnerOrReadOnly, IsGrupoDono, IsGrupoMembro
 from api.serializers import (UsuarioSerializer, 
                              GrupoSerializer,
+                             DetalheGrupoSerializer,
                              DiarioSerializer,
                              CadastroUsuariosSerializer,
                              LocalDeInteresseSerializer,
@@ -39,11 +40,27 @@ class GrupoViewSet(viewsets.ModelViewSet):
     """
     queryset = Grupo.objects.all()
     serializer_class = GrupoSerializer
-    detail_serializer_class = GrupoSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    detail_serializer_class = DetalheGrupoSerializer
+    permission_classes = (permissions.IsAuthenticated,
+                          IsGrupoMembro)
 
     def perform_create(self, serializer):
-        serializer.save(dono=self.request.user.usuario)
+        serializer.save(dono=self.request.user.usuario,
+                        membros=[self.request.user.usuario])
+
+    def dispatch(self, request, pk=None):
+        self.pk = pk
+        return super(GrupoViewSet, self).dispatch(request, pk=pk)
+
+    def get_serializer_class(self):
+        return self.list_serializer_class \
+            if not self.pk else self.detail_serializer_class
+
+    # @action(methods=['PATCH'], 
+    #         detail=True, 
+    #         url_path='add-membros', 
+    #         permission_classes=[permissions.IsAuthenticated], isGrupoDono)
+    # def seguir(self, request, pk=None):
 
 
 class RecomendacaoViewSet(viewsets.ModelViewSet):
@@ -95,7 +112,6 @@ class RelacionamentoViewSet(viewsets.ModelViewSet):
     queryset = Relacionamento.objects
     serializer_class = RelacionamentoSerializer
     list_serializer_class = RelacionamentoSerializer
-    #update_serializer_class = RelacionamentoUpdateSerializer
     permission_classes = (permissions.AllowAny,)
 
     @action(methods=['POST', 'PATCH'], 

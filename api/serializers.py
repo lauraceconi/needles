@@ -19,11 +19,36 @@ class UsuarioSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'diarios')
 
 
+class PerfilSerializer(serializers.ModelSerializer):
+    seguindo = serializers.SerializerMethodField()
+    seguidores = serializers.SerializerMethodField()
+
+    def get_seguindo(self, obj):
+        return obj.relacionamento_set.count()
+
+    def get_seguidores(self, obj):
+        return Relacionamento.objects.filter(seguindo=obj).count()
+
+    class Meta:
+        model = Usuario
+        fields = ('id', 'username', 'first_name', 'last_name', 
+                  'email', 'foto', 'seguindo', 'seguidores')
+
+
 class GrupoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Grupo
         fields = ('id', 'name')
+
+
+class DetalheGrupoSerializer(serializers.ModelSerializer):
+    membros = PerfilSerializer(many=True)
+    dono = PerfilSerializer()
+
+    class Meta:
+        model = Grupo
+        fields = ('id', 'name', 'dono', 'membros')
 
 
 class RecomendacaoSerializer(serializers.ModelSerializer):
@@ -69,19 +94,3 @@ class RelacionamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relacionamento
         fields = ('classificacao_id',)
-
-
-class PerfilSerializer(serializers.ModelSerializer):
-    seguindo = serializers.SerializerMethodField()
-    seguidores = serializers.SerializerMethodField()
-
-    def get_seguindo(self, obj):
-        return obj.relacionamento_set.count()
-
-    def get_seguidores(self, obj):
-        return Relacionamento.objects.filter(seguindo=obj).count()
-
-    class Meta:
-        model = Usuario
-        fields = ('username', 'first_name', 'last_name', 
-                  'email', 'seguindo', 'seguidores')

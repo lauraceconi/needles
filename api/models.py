@@ -14,14 +14,13 @@ class Usuario(User):
     foto = models.ImageField(upload_to='images', 
                              blank=True, 
                              null=True)
-    #grupos = models.ManyToManyField('Grupo', 
-    #                                through='GrupoUsuario', 
-    #                                related_name="membros")
 
 
 class Grupo(Group):
     group = models.OneToOneField(Group)
     dono = models.ForeignKey('Usuario')
+    membros = models.ManyToManyField('Usuario', 
+                                     related_name='membros')
 
 
 class Recomendacao(models.Model):
