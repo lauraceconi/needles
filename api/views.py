@@ -100,7 +100,7 @@ class PerfilViewSet(viewsets.ViewSet):
     permission_classes = (permissions.AllowAny,)
 
     def list(self, request):
-        return Response(self.list_serializer_class(instance=request.user).data,
+        return Response(self.list_serializer_class(instance=request.user.usuario).data,
                         status=status.HTTP_200_OK)
 
 
@@ -119,7 +119,7 @@ class RelacionamentoViewSet(viewsets.ModelViewSet):
             url_path='seguir', 
             permission_classes=[permissions.IsAuthenticated])
     def seguir(self, request, pk=None):
-        relacao = Relacionamento.objects.filter(usuario=request.user,
+        relacao = Relacionamento.objects.filter(usuario=request.user.usuario,
                                                 seguindo=pk).first()
         if relacao and request.method == 'PATCH':
             serializer = self.serializer_class(data=request.data, partial=True)
@@ -134,7 +134,7 @@ class RelacionamentoViewSet(viewsets.ModelViewSet):
         elif not relacao and request.method == 'POST':
             usuario_seguir = get_object_or_404(Usuario, id=pk)
             self.queryset.create(
-                usuario=request.user,
+                usuario=request.user.usuario,
                 seguindo=usuario_seguir,
                 classificacao_id=1
             )
@@ -186,3 +186,11 @@ class DiarioViewSet(viewsets.ModelViewSet):
         
         return Response(resposta, status=status_resposta)
 
+
+class FeedViewSet(viewsets.ViewSet):
+    def list(self, request):
+        seguindo = [usuario.seguindo.id for usuario in Relacionamento.objects.filter(usuario=request.user.usuario)]
+        diarios_seguindo = Diario.objects.filter(autor__in=seguindo)
+        from IPython import embed;embed()
+        diarios_serializer = DiarioSerializer(data=diarios_seguindo)
+        return Response(diarios_serializer)

@@ -17,7 +17,8 @@ router.register(r'recomendacoes', views.RecomendacaoViewSet)
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^perfil/', views.PerfilViewSet.as_view({ 'get': 'list' }))
+    url(r'^perfil/', views.PerfilViewSet.as_view({ 'get': 'list' })),
+    url(r'^feed/', views.FeedViewSet.as_view({ 'get': 'list' }))
 ]
 
 #urlpatterns = format_suffix_patterns(urlpatterns)

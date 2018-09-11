@@ -55,10 +55,10 @@ class Relacionamento(models.Model):
     seguindo = models.ForeignKey(Usuario, related_name='seguindo')
     classificacao = models.ForeignKey(Classificacao)
 
-    def __unicode__(self):
-        return self.usuario.username + '/' + \
-               self.seguindo.username + \
-               ' - ' + self.classificacao.descricao
+    #def __unicode__(self):
+    #    return self.usuario.username + '/' + \
+    #           self.seguindo.username + \
+    #           ' - ' + self.classificacao.descricao
     
     class Meta:
         unique_together = ('usuario', 'seguindo')

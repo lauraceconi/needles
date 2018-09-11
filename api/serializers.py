@@ -59,9 +59,7 @@ class RecomendacaoSerializer(serializers.ModelSerializer):
 
 
 class CadastroUsuariosSerializer(serializers.ModelSerializer):
-    """
-    - Precisa incluir foto
-    """
+
     class Meta:
         model = Usuario
         fields = ('id', 'email', 'password', 'first_name', 'last_name')
@@ -75,6 +73,7 @@ class LocalDeInteresseSerializer(serializers.ModelSerializer):
 
 
 class DiarioSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Diario
         fields = ('id', 'titulo')
