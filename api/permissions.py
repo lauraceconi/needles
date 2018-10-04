@@ -7,7 +7,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        return obj.autor == request.user
+        return obj.autor == request.user.usuario
 
 
 class IsGrupoDono(permissions.BasePermission):

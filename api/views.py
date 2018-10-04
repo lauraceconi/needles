@@ -187,6 +187,21 @@ class DiarioViewSet(viewsets.ModelViewSet):
         return Response(resposta, status=status_resposta)
 
 
+class LocalViewSet(viewsets.ModelViewSet):
+    queryset = LocalDeInteresse.objects
+    list_serializer_class = LocalDeInteresseSerializer
+    detail_serializer_class = LocalDeInteresseSerializer
+    #permission_classes = permissions.IsAuthenticated
+
+    def dispatch(self, request, pk=None):
+        self.pk = pk
+        return super(LocalViewSet, self).dispatch(request, pk=pk)
+
+    def get_serializer_class(self):
+        return self.list_serializer_class \
+            if not self.pk else self.detail_serializer_class
+
+
 class FeedViewSet(viewsets.ViewSet):
     def list(self, request):
         seguindo = [usuario.seguindo.id for usuario in Relacionamento.objects.filter(usuario=request.user.usuario)]
