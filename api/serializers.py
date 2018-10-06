@@ -69,7 +69,7 @@ class LocalDeInteresseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LocalDeInteresse
-        fields = ('id', 'nome', 'descricao', 'latitude', 'longitude')
+        fields = ('id', 'nome', 'descricao', 'latitude', 'longitude', 'foto')
 
 
 class DiarioSerializer(serializers.ModelSerializer):

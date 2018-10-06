@@ -90,7 +90,9 @@ class LocalDeInteresse(models.Model):
     descricao = models.TextField('Descrição', blank=True, null=True)
     latitude = models.FloatField('Latitude', blank=True, null=True)
     longitude = models.FloatField('Longitude', blank=True, null=True)
-    #fotos
+    foto = models.ImageField(upload_to='images', 
+                             blank=True, 
+                             null=True) 
 
     def __unicode__(self):
         return self.nome
