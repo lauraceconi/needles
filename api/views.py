@@ -26,12 +26,12 @@ from api.serializers import (UsuarioSerializer,
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     """
-    Viewset para listar todos os usuários (viewset de exemplo)
+    Viewset para listar todos os usuários
     """
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
     detail_serializer_class = UsuarioSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class GrupoViewSet(viewsets.ModelViewSet):
@@ -39,14 +39,17 @@ class GrupoViewSet(viewsets.ModelViewSet):
     Viewset para criar um grupo
     """
     queryset = Grupo.objects.all()
-    serializer_class = GrupoSerializer
+    list_serializer_class = GrupoSerializer
     detail_serializer_class = DetalheGrupoSerializer
     permission_classes = (permissions.IsAuthenticated,
                           IsGrupoMembro)
 
     def perform_create(self, serializer):
+        membros = (serializer.validated_data['membros']).append(
+            self.request.user.usuario
+        )
         serializer.save(dono=self.request.user.usuario,
-                        membros=[self.request.user.usuario])
+                        membros=membros)
 
     def dispatch(self, request, pk=None):
         self.pk = pk

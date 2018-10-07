@@ -12,11 +12,14 @@ class UsuarioSerializer(serializers.ModelSerializer):
     """
     Serializer de exemplo
     """
-    diarios = serializers.PrimaryKeyRelatedField(many=True, queryset=Diario.objects.all())
+    full_name = serializers.SerializerMethodField()
+
+    def get_full_name(self, obj):
+        return obj.user.get_full_name()
 
     class Meta:
         model = Usuario
-        fields = ('id', 'username', 'diarios')
+        fields = ('id', 'username', 'full_name')
 
 
 class PerfilSerializer(serializers.ModelSerializer):
@@ -39,7 +42,7 @@ class GrupoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Grupo
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'membros')
 
 
 class DetalheGrupoSerializer(serializers.ModelSerializer):

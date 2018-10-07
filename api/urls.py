@@ -7,13 +7,13 @@ from api import views
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
+router.register(r'usuarios', views.UsuarioViewSet)
 router.register(r'cadastro', views.CadastroViewSet, base_name='cadastro')
 router.register(r'grupos', views.GrupoViewSet)
 router.register(r'diarios', views.DiarioViewSet)
 router.register(r'locais', views.LocalViewSet)
 router.register(r'relacionamentos', views.RelacionamentoViewSet)
 router.register(r'recomendacoes', views.RecomendacaoViewSet)
-#router.register(r'usuarios', views.UserViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
