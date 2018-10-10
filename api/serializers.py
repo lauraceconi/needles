@@ -39,7 +39,7 @@ class PerfilSerializer(serializers.ModelSerializer):
 
 
 class GrupoSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = Grupo
         fields = ('id', 'name', 'membros')

@@ -25,4 +25,6 @@ class IsGrupoMembro(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        return request.user.usuario in obj.membros.all()
+        #from IPython import embed;embed()
+        #return request.user.usuario in obj.membros.all()
+        return False

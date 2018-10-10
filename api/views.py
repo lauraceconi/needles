@@ -41,19 +41,22 @@ class GrupoViewSet(viewsets.ModelViewSet):
     queryset = Grupo.objects.all()
     list_serializer_class = GrupoSerializer
     detail_serializer_class = DetalheGrupoSerializer
-    permission_classes = (permissions.IsAuthenticated,
-                          IsGrupoMembro)
+    permission_classes = (IsGrupoMembro,)
 
     def perform_create(self, serializer):
-        membros = (serializer.validated_data['membros']).append(
-            self.request.user.usuario
-        )
+        from IPython import embed;embed()
+        (serializer.validated_data['membros']).append(self.request.user.usuario)
+        membros = serializer.validated_data['membros']
         serializer.save(dono=self.request.user.usuario,
                         membros=membros)
 
     def dispatch(self, request, pk=None):
         self.pk = pk
         return super(GrupoViewSet, self).dispatch(request, pk=pk)
+
+    def get_queryset(self):
+        super(GrupoViewSet, self).get_queryset()
+        return self.request.user.usuario.grupo_set.all()
 
     def get_serializer_class(self):
         return self.list_serializer_class \
