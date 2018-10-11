@@ -14,6 +14,7 @@ router.register(r'diarios', views.DiarioViewSet)
 router.register(r'locais', views.LocalViewSet)
 router.register(r'relacionamentos', views.RelacionamentoViewSet)
 router.register(r'recomendacoes', views.RecomendacaoViewSet)
+router.register(r'dados-usuario', views.PerfilViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

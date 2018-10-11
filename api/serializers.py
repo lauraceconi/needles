@@ -23,8 +23,12 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
 
 class PerfilSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
     seguindo = serializers.SerializerMethodField()
     seguidores = serializers.SerializerMethodField()
+
+    def get_full_name(self, obj):
+        return obj.user.get_full_name()
 
     def get_seguindo(self, obj):
         return obj.relacionamento_set.count()
@@ -34,7 +38,7 @@ class PerfilSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuario
-        fields = ('id', 'username', 'first_name', 'last_name', 
+        fields = ('id', 'username', 'full_name', 
                   'email', 'foto', 'seguindo', 'seguidores')
 
 
