@@ -44,7 +44,6 @@ class GrupoViewSet(viewsets.ModelViewSet):
     permission_classes = (IsGrupoMembro,)
 
     def perform_create(self, serializer):
-        from IPython import embed;embed()
         (serializer.validated_data['membros']).append(self.request.user.usuario)
         membros = serializer.validated_data['membros']
         serializer.save(dono=self.request.user.usuario,
@@ -100,13 +99,18 @@ class CadastroViewSet(viewsets.ModelViewSet):
 
 
 class PerfilViewSet(viewsets.ViewSet):
-    queryset = Usuario.objects
+    queryset = Usuario.objects.all()
     serializer_class = PerfilSerializer
     list_serializer_class = PerfilSerializer
     permission_classes = (permissions.AllowAny,)
 
     def list(self, request):
         return Response(self.list_serializer_class(instance=request.user.usuario).data,
+                        status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk=None):
+        instance = get_object_or_404(self.queryset, id=pk)
+        return Response(self.list_serializer_class(instance=instance).data,
                         status=status.HTTP_200_OK)
 
 
@@ -212,6 +216,5 @@ class FeedViewSet(viewsets.ViewSet):
     def list(self, request):
         seguindo = [usuario.seguindo.id for usuario in Relacionamento.objects.filter(usuario=request.user.usuario)]
         diarios_seguindo = Diario.objects.filter(autor__in=seguindo)
-        from IPython import embed;embed()
         diarios_serializer = DiarioSerializer(data=diarios_seguindo)
         return Response(diarios_serializer)

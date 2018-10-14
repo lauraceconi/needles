@@ -19,7 +19,6 @@ router.register(r'dados-usuario', views.PerfilViewSet)
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^perfil/', views.PerfilViewSet.as_view({ 'get': 'list' })),
     url(r'^feed/', views.FeedViewSet.as_view({ 'get': 'list' }))
 ]
 

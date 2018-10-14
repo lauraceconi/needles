@@ -8,7 +8,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-
 class Usuario(User):
     user = models.OneToOneField(User)
     foto = models.ImageField(upload_to='images', 
@@ -41,7 +40,16 @@ class Classificacao(models.Model):
     """
     Classificação da relação entre os usuários
     """
-    descricao = models.CharField('Descrição', max_length=30)
+    CLASSIFICACAO_CHOICES = (
+        (1, 'Amigo'),
+        (2, 'Conhecido'),
+        (3, 'Não conheço'),
+        (4, 'Inimigo')
+    )
+    descricao = models.PositiveIntegerField(
+        'Descrição', 
+        choices=CLASSIFICACAO_CHOICES
+    )
 
     def __unicode__(self):
         return self.descricao
@@ -54,11 +62,6 @@ class Relacionamento(models.Model):
     usuario = models.ForeignKey(Usuario)
     seguindo = models.ForeignKey(Usuario, related_name='seguindo')
     classificacao = models.ForeignKey(Classificacao)
-
-    #def __unicode__(self):
-    #    return self.usuario.username + '/' + \
-    #           self.seguindo.username + \
-    #           ' - ' + self.classificacao.descricao
     
     class Meta:
         unique_together = ('usuario', 'seguindo')
