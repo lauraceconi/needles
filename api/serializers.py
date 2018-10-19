@@ -46,7 +46,7 @@ class PerfilSerializer(serializers.ModelSerializer):
 class DetalhePerfilSerializer(PerfilSerializer):
     me_segue = serializers.BooleanField()
     sigo = serializers.BooleanField()
-    classificacao_id = serializers.IntegerField()
+    classificacao_id = serializers.IntegerField(default=0)
 
     class Meta:
         model = Usuario

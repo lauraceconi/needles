@@ -46,8 +46,9 @@ class Classificacao(models.Model):
         (3, 'Não conheço'),
         (4, 'Inimigo')
     )
-    descricao = models.PositiveIntegerField(
+    descricao = models.CharField(
         'Descrição', 
+        max_length=30,
         choices=CLASSIFICACAO_CHOICES
     )
 
