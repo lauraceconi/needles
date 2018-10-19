@@ -28,7 +28,7 @@ class Recomendacao(models.Model):
     que deve ser enviada aos seguidores do usuário ou
     para um grupo específico
     """
-    autor = models.ForeignKey(Usuario, related_name="recomendacoes")
+    autor = models.ForeignKey(Usuario, related_name='recomendacoes')
     descricao = models.TextField('Descrição')
     grupo = models.ForeignKey(Group, null=True, blank=True)
 

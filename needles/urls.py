@@ -24,7 +24,8 @@ from api import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('api.urls'), name='api'),
-    url(r'^api-token-auth/', rest_views.obtain_auth_token)
+    url(r'^api-token-auth/', rest_views.obtain_auth_token),
+    url(r'^webpush/', include('webpush.urls'))
 ]
 
 if settings.DEBUG:

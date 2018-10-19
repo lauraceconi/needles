@@ -22,6 +22,7 @@ from api.serializers import (UsuarioSerializer,
                              DetalheDiarioSerializer,
                              RelacionamentoSerializer,
                              PerfilSerializer,
+                             DetalhePerfilSerializer,
                              RecomendacaoSerializer)
 
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -77,9 +78,9 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
     serializer_class = RecomendacaoSerializer
 
     def perform_create(self, serializer):
-        grupo = serializer.get('grupo', None)
-        serializer.save(autor=self.request.user.usuario,
-                        grupo=grupo)
+        # TODO: COMPARTILHAR COM GRUPOS
+        # grupo = serializer.get('grupo', None)
+        serializer.save(autor=self.request.user.usuario)
 
 
 class CadastroViewSet(viewsets.ModelViewSet):
@@ -102,6 +103,7 @@ class PerfilViewSet(viewsets.ViewSet):
     queryset = Usuario.objects.all()
     serializer_class = PerfilSerializer
     list_serializer_class = PerfilSerializer
+    detail_serializer_class = DetalhePerfilSerializer
     permission_classes = (permissions.AllowAny,)
 
     def list(self, request):
@@ -110,7 +112,20 @@ class PerfilViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         instance = get_object_or_404(self.queryset, id=pk)
-        return Response(self.list_serializer_class(instance=instance).data,
+        try:
+            sigo = instance.seguindo.get(usuario=request.user.usuario)
+            instance.sigo = True
+            instance.classificacao_id = sigo.classificacao_id
+        except Relacionamento.DoesNotExist:
+            instance.sigo = False
+
+        try:
+            me_segue = request.user.usuario.seguindo.get(usuario=instance)
+            instance.me_segue = True
+        except Relacionamento.DoesNotExist:
+            instance.me_segue = False
+
+        return Response(self.detail_serializer_class(instance=instance).data,
                         status=status.HTTP_200_OK)
 
 

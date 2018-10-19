@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 from api.models import (Usuario,
                         Grupo,
                         Diario, 
@@ -42,6 +43,18 @@ class PerfilSerializer(serializers.ModelSerializer):
                   'email', 'foto', 'seguindo', 'seguidores')
 
 
+class DetalhePerfilSerializer(PerfilSerializer):
+    me_segue = serializers.BooleanField()
+    sigo = serializers.BooleanField()
+    classificacao_id = serializers.IntegerField()
+
+    class Meta:
+        model = Usuario
+        fields = ('id', 'username', 'full_name', 
+                  'email', 'foto', 'seguindo', 'seguidores',
+                  'me_segue', 'sigo', 'classificacao_id')
+
+
 class GrupoSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -62,7 +75,7 @@ class RecomendacaoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recomendacao
-        fields = ('id', 'descricao', 'grupo')
+        fields = ('id', 'descricao')
 
 
 class CadastroUsuariosSerializer(serializers.ModelSerializer):
