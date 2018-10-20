@@ -102,7 +102,15 @@ class LocalDeInteresse(models.Model):
         return self.nome
 
 
-@receiver(post_save, sender=Usuario)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
+class Notificacao(models.Model):
+    usuario = models.ForeignKey(Usuario,
+                                on_delete=models.CASCADE)
+    user_id = models.CharField('User ID',
+                               max_length=100)
+    ativo = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.usuario.get_full_name()
+
+    class Meta:
+        verbose_name_plural = 'Notificações'

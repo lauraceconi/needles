@@ -13,14 +13,10 @@ colorama==0.3.7
 configparser==3.5.0
 constantly==15.1.0
 cryptography==2.1.4
-debtags==2.0
 decorator==4.3.0
-defer==1.0.6
-dirspec==13.10
 Django==1.11
 django-cors-headers==2.4.0
 djangorestframework==3.8.2
-duplicity==0.7.17
 enum34==1.1.6
 fasteners==0.12.0
 futures==3.2.0
@@ -44,9 +40,7 @@ ndg-httpsclient==0.4.4
 numpy==1.13.3
 oauthlib==2.0.6
 olefile==0.45.1
-oneconf==0.3.9
 onesignal-sdk==0.1.1
-PAM==0.4.2
 pathlib2==2.3.2
 pexpect==4.6.0
 pickleshare==0.7.4
@@ -61,9 +55,7 @@ pyasn1-modules==0.2.1
 pycairo==1.16.2
 pycrypto==2.6.1
 pycups==1.9.73
-pycurl==7.43.0.1
 Pygments==2.2.0
-pygobject==3.26.1
 PyJWT==1.5.3
 pyliblzma==0.5.3
 pylint==1.9.3
@@ -74,7 +66,6 @@ python-apt==1.6.3
 python-debian==0.1.32
 python-ldap==3.0.0
 pytz==2018.5
-pywebpush==1.6.0
 pyxdg==0.25
 requests==2.19.1
 rpm==4.14.1

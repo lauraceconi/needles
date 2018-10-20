@@ -1,22 +1,34 @@
-import config
+# -*- coding: utf-8 -*-
+from django.conf import settings
 import onesignal as onesignal_sdk
 
+def enviar_notificacao(notificacao):
 
-def enviar_notificacao(notificacao = None):
-
-    onesignal_client = onesignal_sdk.Client(user_auth_key="YmNlOWYwNTctYTI1MC00Mjc0LThmMjQtNmYxODg1NWEyMjVi",
-                                        app={"app_auth_key": config.onesignal_rest_api_key, "app_id": config.onesignal_app_id})
-
+    onesignal_client = onesignal_sdk.Client(
+        user_auth_key = settings.ONESIGNAL_AUTH_ID,
+        app = { 
+            'app_auth_key': settings.ONESIGNAL_API_KEY,
+            'app_id': settings.ONESIGNAL_APP_ID
+        }
+    )
 
     # create a notification
-    new_notification = onesignal_sdk.Notification(contents={"en": "Message"})
-    new_notification.set_parameter("headings", {"en": "Title"})
-
-    # set target Segments
-    new_notification.set_included_segments(["All"])
-    new_notification.set_excluded_segments(["Inactive Users"])
+    nova_notificacao = onesignal_sdk.Notification(
+        contents = {
+            'en': notificacao['mensagem'],
+            'pt-br': notificacao['mensagem']
+        }
+    )
+    nova_notificacao.set_parameter(
+        'headings', {
+            'en': notificacao['titulo'],
+            'pt-br': notificacao['titulo']
+        }
+    )
+    nova_notificacao.set_parameter('url', settings.APP_URL + notificacao['url'])
+    nova_notificacao.set_target_devices([notificacao['user_id']])
 
     # send notification, it will return a response
-    onesignal_response = onesignal_client.send_notification(new_notification)
+    onesignal_response = onesignal_client.send_notification(nova_notificacao)
     print(onesignal_response.status_code)
     print(onesignal_response.json())
