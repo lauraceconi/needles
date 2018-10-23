@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 from api.models import Usuario, Relacionamento, Notificacao
 from api.utils import enviar_notificacao
 
