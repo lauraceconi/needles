@@ -87,7 +87,7 @@ DATABASES = {
         'PASSWORD': 'yTKC0Nhe7uUI',
         'HOST': 'lceconi.mysql.pythonanywhere-services.com',
         'PORT': '3306',
-    }
+    },
     'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
