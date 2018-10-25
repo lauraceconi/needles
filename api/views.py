@@ -35,6 +35,19 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
 
+class UsuarioLogadoViewSet(viewsets.ViewSet):
+    """
+    Viewset para listar os dados do usuário logado
+    """
+    queryset = Usuario.objects.all()
+    list_serializer_class = UsuarioSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def list(self, request):
+        return Response(self.list_serializer_class(instance=request.user.usuario).data,
+                        status=status.HTTP_200_OK)
+
+
 class GrupoViewSet(viewsets.ModelViewSet):
     """
     Viewset para criar um grupo
@@ -76,6 +89,7 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
     queryset = Recomendacao.objects
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = RecomendacaoSerializer
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
         # TODO: COMPARTILHAR COM GRUPOS
