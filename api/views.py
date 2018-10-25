@@ -11,7 +11,8 @@ from api.models import (Usuario,
                         Diario, 
                         LocalDeInteresse,
                         Relacionamento,
-                        Recomendacao)
+                        Recomendacao,
+                        Notificacao)
 from api.permissions import IsOwnerOrReadOnly, IsGrupoDono, IsGrupoMembro
 from api.serializers import (UsuarioSerializer, 
                              GrupoSerializer,
@@ -23,7 +24,8 @@ from api.serializers import (UsuarioSerializer,
                              RelacionamentoSerializer,
                              PerfilSerializer,
                              DetalhePerfilSerializer,
-                             RecomendacaoSerializer)
+                             RecomendacaoSerializer,
+                             NotificacaoSerializer)
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     """
@@ -247,3 +249,13 @@ class FeedViewSet(viewsets.ViewSet):
         diarios_seguindo = Diario.objects.filter(autor__in=seguindo)
         diarios_serializer = DiarioSerializer(data=diarios_seguindo)
         return Response(diarios_serializer)
+
+
+class NotificacaoViewSet(viewsets.ModelViewSet):
+    queryset = Notificacao.objects
+    serializer_class = NotificacaoSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def perform_create(self, serializer):        
+        serializer.save(usuario=self.request.user.usuario,
+                        user_id=serializer.validated_data['user_id'])

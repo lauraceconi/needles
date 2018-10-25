@@ -81,6 +81,14 @@ WSGI_APPLICATION = 'needles.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'lceconi$needles',
+        'USER': 'lceconi',
+        'PASSWORD': 'yTKC0Nhe7uUI',
+        'HOST': 'lceconi.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
+    },
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
@@ -137,3 +145,9 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+APP_URL = 'https://wanderlustapp.azurewebsites.net/'
+
+ONESIGNAL_AUTH_ID = 'YmNlOWYwNTctYTI1MC00Mjc0LThmMjQtNmYxODg1NWEyMjVi'
+ONESIGNAL_APP_ID = '9929500d-6547-454b-92eb-39bdbb05fa82'
+ONESIGNAL_API_KEY = 'Y2Y4YjgyY2ItYjgwZi00ZDgwLThiMzgtOWJkMmEzMzEwYjlk'

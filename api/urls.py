@@ -16,11 +16,12 @@ router.register(r'locais', views.LocalViewSet)
 router.register(r'relacionamentos', views.RelacionamentoViewSet)
 router.register(r'recomendacoes', views.RecomendacaoViewSet)
 router.register(r'perfil', views.PerfilViewSet)
+router.register(r'notificacoes', views.NotificacaoViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^feed/', views.FeedViewSet.as_view({ 'get': 'list' }))
+    url(r'^feed/', views.FeedViewSet.as_view({ 'get': 'list' })),
 ]
 
 #urlpatterns = format_suffix_patterns(urlpatterns)

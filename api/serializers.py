@@ -6,7 +6,8 @@ from api.models import (Usuario,
                         Diario, 
                         LocalDeInteresse, 
                         Relacionamento,
-                        Recomendacao)
+                        Recomendacao,
+                        Notificacao)
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -113,3 +114,10 @@ class RelacionamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relacionamento
         fields = ('classificacao_id',)
+
+
+class NotificacaoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notificacao
+        fields = ('user_id',)
