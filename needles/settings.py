@@ -151,3 +151,5 @@ APP_URL = 'https://wanderlustapp.azurewebsites.net/'
 ONESIGNAL_AUTH_ID = 'YmNlOWYwNTctYTI1MC00Mjc0LThmMjQtNmYxODg1NWEyMjVi'
 ONESIGNAL_APP_ID = '9929500d-6547-454b-92eb-39bdbb05fa82'
 ONESIGNAL_API_KEY = 'Y2Y4YjgyY2ItYjgwZi00ZDgwLThiMzgtOWJkMmEzMzEwYjlk'
+
+from settings_local import *

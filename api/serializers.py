@@ -57,6 +57,9 @@ class DetalhePerfilSerializer(PerfilSerializer):
 
 
 class GrupoSerializer(serializers.ModelSerializer):
+    membros = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Usuario.objects.all()
+    )
     
     class Meta:
         model = Grupo
@@ -65,7 +68,7 @@ class GrupoSerializer(serializers.ModelSerializer):
 
 class DetalheGrupoSerializer(serializers.ModelSerializer):
     membros = PerfilSerializer(many=True)
-    dono = PerfilSerializer()
+    dono = UsuarioSerializer()
 
     class Meta:
         model = Grupo
