@@ -29,6 +29,7 @@ class Recomendacao(models.Model):
     autor = models.ForeignKey(Usuario, related_name='recomendacoes')
     descricao = models.TextField('Descrição')
     grupo = models.ForeignKey(Group, null=True, blank=True)
+    seguidores = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.descricao

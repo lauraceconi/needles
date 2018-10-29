@@ -57,11 +57,11 @@ class GrupoViewSet(viewsets.ModelViewSet):
     queryset = Grupo.objects.all()
     list_serializer_class = GrupoSerializer
     detail_serializer_class = DetalheGrupoSerializer
-    permission_classes = (IsGrupoMembro,)
+    permission_classes = (IsGrupoMembro,)        
 
     def perform_create(self, serializer):
         (serializer.validated_data['membros']).append(self.request.user.usuario)
-        membros = serializer.validated_data['membros']
+        membros = serializer.validated_data['membros']        
         serializer.save(dono=self.request.user.usuario,
                         membros=membros)
 
@@ -89,14 +89,26 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
     Viewset para cadastro de uma recomendação
     """
     queryset = Recomendacao.objects
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = RecomendacaoSerializer
+    list_serializer_class = RecomendacaoSerializer
+    detail_serializer_class = RecomendacaoSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
         # TODO: COMPARTILHAR COM GRUPOS
         # grupo = serializer.get('grupo', None)
         serializer.save(autor=self.request.user.usuario)
+
+    def dispatch(self, request, pk=None):
+        self.pk = pk
+        return super(RecomendacaoViewSet, self).dispatch(request, pk=pk)
+
+    def get_queryset(self):        
+        super(RecomendacaoViewSet, self).get_queryset()
+        return self.request.user.usuario.recomendacoes.all()
+
+    def get_serializer_class(self):
+        return self.list_serializer_class \
+            if not self.pk else self.detail_serializer_class
 
 
 class CadastroViewSet(viewsets.ModelViewSet):
@@ -215,6 +227,9 @@ class DiarioViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=True, url_path='cria-local')
     def cria_local(self, request, pk=None):
+        """
+        Função para criar um Local de Interesse em um Diário
+        """
         diario = self.get_object()
         serializer = LocalDeInteresseSerializer(data=request.data)
         if serializer.is_valid():

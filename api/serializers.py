@@ -60,7 +60,7 @@ class GrupoSerializer(serializers.ModelSerializer):
     membros = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Usuario.objects.all()
     )
-    
+
     class Meta:
         model = Grupo
         fields = ('id', 'name', 'membros')
@@ -79,7 +79,7 @@ class RecomendacaoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recomendacao
-        fields = ('id', 'descricao')
+        fields = ('id', 'autor', 'descricao', 'grupos', 'seguidores')
 
 
 class CadastroUsuariosSerializer(serializers.ModelSerializer):
