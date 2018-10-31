@@ -25,6 +25,7 @@ from api.serializers import (UsuarioSerializer,
                              PerfilSerializer,
                              DetalhePerfilSerializer,
                              RecomendacaoSerializer,
+                             DetalheRecomendacaoSerializer,
                              NotificacaoSerializer)
 
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -90,12 +91,10 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
     """
     queryset = Recomendacao.objects
     list_serializer_class = RecomendacaoSerializer
-    detail_serializer_class = RecomendacaoSerializer
+    detail_serializer_class = DetalheRecomendacaoSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
-        # TODO: COMPARTILHAR COM GRUPOS
-        # grupo = serializer.get('grupo', None)
         serializer.save(autor=self.request.user.usuario)
 
     def dispatch(self, request, pk=None):

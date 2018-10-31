@@ -59,23 +59,37 @@ class DetalhePerfilSerializer(PerfilSerializer):
 class GrupoSerializer(serializers.ModelSerializer):
     membros = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Usuario.objects.all()
-    )
+    )    
 
     class Meta:
         model = Grupo
         fields = ('id', 'name', 'membros')
 
 
+class RecomendacaoSerializer(serializers.ModelSerializer):
+    grupos = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Grupo.objects.all()
+    )
+    seguidores = serializers.BooleanField()
+
+    class Meta:
+        model = Recomendacao
+        fields = ('id', 'descricao', 'grupos', 'seguidores')
+
+
 class DetalheGrupoSerializer(serializers.ModelSerializer):
     membros = PerfilSerializer(many=True)
     dono = UsuarioSerializer()
+    recomendacoes = RecomendacaoSerializer(many=True)
 
     class Meta:
         model = Grupo
-        fields = ('id', 'name', 'dono', 'membros')
+        fields = ('id', 'name', 'dono', 'membros', 'recomendacoes')
 
 
-class RecomendacaoSerializer(serializers.ModelSerializer):
+class DetalheRecomendacaoSerializer(serializers.ModelSerializer):
+    autor = PerfilSerializer()
+    grupos = GrupoSerializer(many=True)
 
     class Meta:
         model = Recomendacao
