@@ -35,7 +35,7 @@ class Recomendacao(models.Model):
     descricao = models.TextField('Descrição')
     grupos = models.ManyToManyField('Grupo')
     seguidores = models.BooleanField(default=True)
-    # diarios = models.ManyToManyField('Diario')
+    diarios = models.ManyToManyField('Diario')
 
     def __unicode__(self):
         return self.descricao

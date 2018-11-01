@@ -71,36 +71,14 @@ class RecomendacaoSerializer(serializers.ModelSerializer):
         many=True, queryset=Grupo.objects.all()
     )
     seguidores = serializers.BooleanField()
+    qntd_diarios = serializers.SerializerMethodField()
+
+    def get_qntd_diarios(self, obj):
+        return obj.diarios.count()
 
     class Meta:
         model = Recomendacao
-        fields = ('id', 'descricao', 'grupos', 'seguidores')
-
-
-class DetalheGrupoSerializer(serializers.ModelSerializer):
-    membros = PerfilSerializer(many=True)
-    dono = UsuarioSerializer()
-    recomendacoes = RecomendacaoSerializer(many=True)
-
-    class Meta:
-        model = Grupo
-        fields = ('id', 'name', 'dono', 'membros', 'recomendacoes')
-
-
-class DetalheRecomendacaoSerializer(serializers.ModelSerializer):
-    autor = PerfilSerializer()
-    grupos = GrupoSerializer(many=True)
-
-    class Meta:
-        model = Recomendacao
-        fields = ('id', 'autor', 'descricao', 'grupos', 'seguidores')
-
-
-class CadastroUsuariosSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Usuario
-        fields = ('id', 'email', 'password', 'first_name', 'last_name')
+        fields = ('id', 'descricao', 'grupos', 'seguidores', 'qntd_diarios')
 
 
 class LocalDeInteresseSerializer(serializers.ModelSerializer):
@@ -119,10 +97,38 @@ class DiarioSerializer(serializers.ModelSerializer):
 
 class DetalheDiarioSerializer(serializers.ModelSerializer):
     locais_de_interesse = LocalDeInteresseSerializer(many=True, read_only=True)
+    autor = UsuarioSerializer()
 
     class Meta:
         model = Diario
-        fields = ('id', 'titulo', 'locais_de_interesse')
+        fields = ('id', 'titulo', 'autor', 'locais_de_interesse')
+
+
+class DetalheRecomendacaoSerializer(serializers.ModelSerializer):
+    autor = PerfilSerializer()
+    grupos = GrupoSerializer(many=True)
+    diarios = DetalheDiarioSerializer(many=True)
+
+    class Meta:
+        model = Recomendacao
+        fields = ('id', 'autor', 'descricao', 'grupos', 'seguidores', 'diarios')
+
+
+class DetalheGrupoSerializer(serializers.ModelSerializer):
+    membros = PerfilSerializer(many=True)
+    dono = UsuarioSerializer()
+    recomendacoes = RecomendacaoSerializer(many=True)
+
+    class Meta:
+        model = Grupo
+        fields = ('id', 'name', 'dono', 'membros', 'recomendacoes')
+
+
+class CadastroUsuariosSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Usuario
+        fields = ('id', 'email', 'password', 'first_name', 'last_name')
 
 
 class RelacionamentoSerializer(serializers.ModelSerializer):

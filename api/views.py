@@ -109,6 +109,25 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
         return self.list_serializer_class \
             if not self.pk else self.detail_serializer_class
 
+    @action(methods=['POST'], 
+            detail=True, 
+            url_path='sugerir-diario', 
+            permission_classes=[
+                permissions.IsAuthenticated,
+            ])
+    def sugerir_diario(self, request, pk=None):
+        recomendacao = self.get_object()
+        # serializer = SugerirDiarioSerializer(data=request.data)
+        serializer = self.detail_serializer_class(data=request.data, partial=True)
+        resposta = 'Ocorreu um erro na socilitação '
+        status_resposta = status.HTTP_400_BAD_REQUEST
+        if serializer.is_valid():
+            recomendacao.diarios = serializer.validated_data['diarios']
+            recomendacao.save()
+            resposta = 'Sucesso! A sugestão foi salva. '
+            status_resposta = status.HTTP_200_OK
+        return Response(resposta, status=status_resposta)
+
 
 class CadastroViewSet(viewsets.ModelViewSet):
     """
@@ -176,7 +195,7 @@ class RelacionamentoViewSet(viewsets.ModelViewSet):
         if relacao and request.method == 'PATCH':
             serializer = self.serializer_class(data=request.data, partial=True)
             if serializer.is_valid():
-                relacao.classificacao_id = serializer.data['classificacao_id']
+                relacao.classificacao_id = serializer.validated_data['classificacao_id']
                 relacao.save()
                 resposta = 'Sucesso! A classificação foi modificada. '
                 status_resposta = status.HTTP_200_OK
