@@ -144,3 +144,7 @@ class NotificacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notificacao
         fields = ('user_id',)
+
+
+class FeedSerializer(serializers.Serializer):
+    recomendacoes = DetalheRecomendacaoSerializer(many=True)

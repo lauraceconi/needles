@@ -26,7 +26,8 @@ from api.serializers import (UsuarioSerializer,
                              DetalhePerfilSerializer,
                              RecomendacaoSerializer,
                              DetalheRecomendacaoSerializer,
-                             NotificacaoSerializer)
+                             NotificacaoSerializer,
+                             FeedSerializer)
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     """
@@ -71,8 +72,8 @@ class GrupoViewSet(viewsets.ModelViewSet):
         return super(GrupoViewSet, self).dispatch(request, pk=pk)
 
     def get_queryset(self):
-        super(GrupoViewSet, self).get_queryset()
-        return self.request.user.usuario.grupo_set.all()
+        super(GrupoViewSet, self).get_queryset()        
+        return Grupo.objects.filter(membros__id=self.request.user.usuario.id)
 
     def get_serializer_class(self):
         return self.list_serializer_class \
@@ -119,14 +120,12 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
         recomendacao = self.get_object()
         # serializer = SugerirDiarioSerializer(data=request.data)
         serializer = self.detail_serializer_class(data=request.data, partial=True)
-        resposta = 'Ocorreu um erro na socilitação '
-        status_resposta = status.HTTP_400_BAD_REQUEST
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             recomendacao.diarios = serializer.validated_data['diarios']
             recomendacao.save()
             resposta = 'Sucesso! A sugestão foi salva. '
             status_resposta = status.HTTP_200_OK
-        return Response(resposta, status=status_resposta)
+            return Response(resposta, status=status_resposta)
 
 
 class CadastroViewSet(viewsets.ModelViewSet):
@@ -278,10 +277,15 @@ class LocalViewSet(viewsets.ModelViewSet):
 
 class FeedViewSet(viewsets.ViewSet):
     def list(self, request):
-        seguindo = [usuario.seguindo.id for usuario in Relacionamento.objects.filter(usuario=request.user.usuario)]
-        diarios_seguindo = Diario.objects.filter(autor__in=seguindo)
-        diarios_serializer = DiarioSerializer(data=diarios_seguindo)
-        return Response(diarios_serializer)
+        dados = { 'recomendacoes': [] }
+        for grupo in request.user.usuario.grupo_set.all():
+            for recomendacao in grupo.recomendacao_set.all():
+                dados['recomendacoes'].append(recomendacao)
+        dados_serializados = FeedSerializer(dados).data
+        return Response(
+            dados_serializados['recomendacoes'], 
+            status=status.HTTP_200_OK
+        )
 
 
 class NotificacaoViewSet(viewsets.ModelViewSet):
