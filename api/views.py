@@ -79,12 +79,6 @@ class GrupoViewSet(viewsets.ModelViewSet):
         return self.list_serializer_class \
             if not self.pk else self.detail_serializer_class
 
-    # @action(methods=['PATCH'], 
-    #         detail=True, 
-    #         url_path='add-membros', 
-    #         permission_classes=[permissions.IsAuthenticated], isGrupoDono)
-    # def seguir(self, request, pk=None):
-
 
 class RecomendacaoViewSet(viewsets.ModelViewSet):
     """
@@ -144,16 +138,12 @@ class CadastroViewSet(viewsets.ModelViewSet):
         instance.save()
 
 
-class PerfilViewSet(viewsets.ViewSet):
+class PerfilViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = PerfilSerializer
     list_serializer_class = PerfilSerializer
     detail_serializer_class = DetalhePerfilSerializer
     permission_classes = (permissions.AllowAny,)
-
-    def list(self, request):
-        return Response(self.list_serializer_class(instance=request.user.usuario).data,
-                        status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
         instance = get_object_or_404(self.queryset, id=pk)
@@ -193,14 +183,11 @@ class RelacionamentoViewSet(viewsets.ModelViewSet):
                                                 seguindo=pk).first()
         if relacao and request.method == 'PATCH':
             serializer = self.serializer_class(data=request.data, partial=True)
-            if serializer.is_valid():
+            if serializer.is_valid(raise_exception=True):
                 relacao.classificacao_id = serializer.validated_data['classificacao_id']
                 relacao.save()
                 resposta = 'Sucesso! A classificação foi modificada. '
                 status_resposta = status.HTTP_200_OK
-            else:
-                resposta = serializer.errors
-                status_resposta = status.HTTP_400_BAD_REQUEST
         elif not relacao and request.method == 'POST':
             usuario_seguir = get_object_or_404(Usuario, id=pk)
             self.queryset.create(
@@ -249,14 +236,10 @@ class DiarioViewSet(viewsets.ModelViewSet):
         """
         diario = self.get_object()
         serializer = LocalDeInteresseSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save(diario=diario)
             resposta = 'Local de Interesse criado com sucesso!'
-            status_resposta = status.HTTP_200_OK
-        else:
-            resposta = serializer.errors
-            status_resposta = status.HTTP_400_BAD_REQUEST
-        
+            status_resposta = status.HTTP_200_OK        
         return Response(resposta, status=status_resposta)
 
 

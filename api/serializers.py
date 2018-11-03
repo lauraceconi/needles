@@ -48,12 +48,18 @@ class DetalhePerfilSerializer(PerfilSerializer):
     me_segue = serializers.BooleanField()
     sigo = serializers.BooleanField()
     classificacao_id = serializers.IntegerField(default=0)
+    recomendacoes = serializers.SerializerMethodField()
+
+    def get_recomendacoes(self, obj):
+        recomendacoes = obj.recomendacoes.filter(seguidores=True)
+        return RecomendacaoSerializer(recomendacoes, many=True).data
 
     class Meta:
         model = Usuario
-        fields = ('id', 'first_name', 'last_name', 'full_name', 
-                  'email', 'foto', 'seguindo', 'seguidores',
-                  'me_segue', 'sigo', 'classificacao_id')
+        fields = ('id', 'first_name', 'last_name', 
+                  'full_name', 'email', 'foto', 
+                  'seguindo', 'seguidores', 'me_segue', 
+                  'sigo', 'classificacao_id', 'recomendacoes')
 
 
 class GrupoSerializer(serializers.ModelSerializer):
