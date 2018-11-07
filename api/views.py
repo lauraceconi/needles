@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.exceptions import SuspiciousOperation
 from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, permissions, mixins, status
@@ -129,13 +130,16 @@ class CadastroViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
     serializer_class = CadastroUsuariosSerializer
 
-    def perform_create(request, serializer):
+    def perform_create(self, serializer):
         # Faz o username ser igual ao email
         # para facilitar o login, que requer username
-        username = serializer.validated_data['email']
-        instance = serializer.save(username=username)
-        instance.set_password(instance.password)
-        instance.save()
+        try:
+            username = serializer.validated_data['email']
+            instance = serializer.save(username=username)
+            instance.set_password(instance.password)
+            instance.save()
+        except IntegrityError:
+            raise SuspiciousOperation('Este e-mail já está sendo utilizado.')
 
 
 class PerfilViewSet(viewsets.ModelViewSet):
