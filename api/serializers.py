@@ -41,7 +41,8 @@ class PerfilSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ('id', 'first_name', 'last_name', 'full_name', 
-                  'email', 'foto', 'seguindo', 'seguidores')
+                  'email', 'data_nascimento', 'cidade_natal',
+                  'cidade_atual', 'foto', 'seguindo', 'seguidores')
 
 
 class DetalhePerfilSerializer(PerfilSerializer):
@@ -59,7 +60,8 @@ class DetalhePerfilSerializer(PerfilSerializer):
         fields = ('id', 'first_name', 'last_name', 
                   'full_name', 'email', 'foto', 
                   'seguindo', 'seguidores', 'me_segue', 
-                  'sigo', 'classificacao_id', 'recomendacoes')
+                  'sigo', 'classificacao_id', 'recomendacoes',
+                  'data_nascimento', 'cidade_natal', 'cidade_atual',)
 
 
 class GrupoSerializer(serializers.ModelSerializer):

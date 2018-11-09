@@ -112,7 +112,6 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
             ])
     def sugerir_diario(self, request, pk=None):
         recomendacao = self.get_object()
-        # serializer = SugerirDiarioSerializer(data=request.data)
         serializer = self.detail_serializer_class(data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             recomendacao.diarios = serializer.validated_data['diarios']
