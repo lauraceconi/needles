@@ -120,7 +120,6 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
                 permissions.IsAuthenticated,
             ])
     def sugerir_diario(self, request, pk=None):
-        from IPython import embed;embed()
         recomendacao = self.get_object()
         recomendacao.diarios = request.data['diarios']
         recomendacao.save()
