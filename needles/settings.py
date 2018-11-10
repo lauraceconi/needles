@@ -25,7 +25,8 @@ SECRET_KEY = '4&b+a@!c0v9ud0fgj-vi-_cpg$-4xg5l9y)vq1vj!l7#4a7$l&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['wanderlust-pwa.firebaseapp.com']
+ALLOWED_HOSTS = ['lceconi.pythonanywhere.com', 'wanderlust-pwa.firebaseapp.com']
+CORS_ORIGIN_WHITELIST = ('wanderlust-pwa.firebaseapp.com',)
 CORS_ORIGIN_ALLOW_ALL = False
 
 # Application definition
