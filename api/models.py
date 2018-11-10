@@ -8,6 +8,15 @@ from django.dispatch import receiver
 
 class Usuario(User):
     user = models.OneToOneField(User)
+    data_nascimento = models.DateField(blank=True, 
+                                       null=True)
+    cidade_natal = models.CharField(max_length=60,
+                                    blank=True, 
+                                    null=True)
+    cidade_atual = models.CharField(max_length=60,
+                                    blank=True, 
+                                    null=True)
+    descricao = models.TextField(blank=True, null=True)
     foto = models.ImageField(upload_to='images', 
                              blank=True, 
                              null=True)
@@ -35,7 +44,8 @@ class Recomendacao(models.Model):
     descricao = models.TextField('Descrição')
     grupos = models.ManyToManyField('Grupo')
     seguidores = models.BooleanField(default=True)
-    diarios = models.ManyToManyField('Diario')
+    diarios = models.ManyToManyField('Diario', blank=True)
+    data_criacao = models.DateTimeField(blank=True, null=True)
 
     def __unicode__(self):
         return self.descricao

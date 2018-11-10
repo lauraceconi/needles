@@ -7,7 +7,8 @@ from api.models import (Usuario,
                         Diario, 
                         LocalDeInteresse, 
                         Relacionamento,
-                        Notificacao)
+                        Notificacao,
+                        Recomendacao)
 
 class UsuarioAdmin(admin.ModelAdmin):
     model = Usuario
@@ -40,3 +41,8 @@ class NotificacaoAdmin(admin.ModelAdmin):
     model = Notificacao
 
 admin.site.register(Notificacao, NotificacaoAdmin)
+
+class RecomendacaoAdmin(admin.ModelAdmin):
+    model = Recomendacao
+
+admin.site.register(Recomendacao, RecomendacaoAdmin)

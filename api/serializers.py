@@ -41,8 +41,8 @@ class PerfilSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ('id', 'first_name', 'last_name', 'full_name', 
-                  'email', 'data_nascimento', 'cidade_natal',
-                  'cidade_atual', 'foto', 'seguindo', 'seguidores')
+                  'email', 'cidade_natal', 'cidade_atual', 
+                  'foto', 'seguindo', 'seguidores')
 
 
 class DetalhePerfilSerializer(PerfilSerializer):
@@ -61,7 +61,7 @@ class DetalhePerfilSerializer(PerfilSerializer):
                   'full_name', 'email', 'foto', 
                   'seguindo', 'seguidores', 'me_segue', 
                   'sigo', 'classificacao_id', 'recomendacoes',
-                  'data_nascimento', 'cidade_natal', 'cidade_atual',)
+                  'cidade_natal', 'cidade_atual',)
 
 
 class GrupoSerializer(serializers.ModelSerializer):
@@ -119,7 +119,7 @@ class DetalheRecomendacaoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recomendacao
-        fields = ('id', 'autor', 'descricao', 'grupos', 'seguidores', 'diarios')
+        fields = ('id', 'autor', 'descricao', 'grupos', 'seguidores', 'diarios', 'data_criacao')
 
 
 class DetalheGrupoSerializer(serializers.ModelSerializer):
@@ -133,6 +133,12 @@ class DetalheGrupoSerializer(serializers.ModelSerializer):
 
 
 class CadastroUsuariosSerializer(serializers.ModelSerializer):
+    def validate_email(self, obj):
+        try:
+            Usuario.objects.get(email=obj)
+            raise serializers.ValidationError(u'E-mail já cadastrado. ')
+        except Usuario.DoesNotExist:
+            return obj
 
     class Meta:
         model = Usuario

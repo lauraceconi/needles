@@ -23,10 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4&b+a@!c0v9ud0fgj-vi-_cpg$-4xg5l9y)vq1vj!l7#4a7$l&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = ['wanderlust-pwa.firebaseapp.com']
+CORS_ORIGIN_ALLOW_ALL = False
 
 # Application definition
 
@@ -143,10 +143,13 @@ REST_FRAMEWORK = {
     )
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 APP_URL = 'https://wanderlust-pwa.firebaseapp.com/'
 
 ONESIGNAL_AUTH_ID = 'YmNlOWYwNTctYTI1MC00Mjc0LThmMjQtNmYxODg1NWEyMjVi'
 ONESIGNAL_APP_ID = '9929500d-6547-454b-92eb-39bdbb05fa82'
 ONESIGNAL_API_KEY = 'Y2Y4YjgyY2ItYjgwZi00ZDgwLThiMzgtOWJkMmEzMzEwYjlk'
+
+try:
+    from settings_local import *
+except ImportError:
+    pass

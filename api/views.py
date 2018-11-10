@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import datetime
 
 from django.core.exceptions import SuspiciousOperation
 from django.db import IntegrityError
@@ -14,7 +15,11 @@ from api.models import (Usuario,
                         Relacionamento,
                         Recomendacao,
                         Notificacao)
-from api.permissions import IsOwnerOrReadOnly, IsGrupoDono, IsGrupoMembro
+from api.permissions import (IsOwnerOrReadOnly, 
+                             IsGrupoDono, 
+                             IsGrupoMembro, 
+                             PermissaoDiario,
+                             PermissaoRecomendacao)
 from api.serializers import (UsuarioSerializer, 
                              GrupoSerializer,
                              DetalheGrupoSerializer,
@@ -85,21 +90,25 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
     """
     Viewset para cadastro de uma recomendação
     """
-    queryset = Recomendacao.objects
+    queryset = Recomendacao.objects.all()
+    serializer_class = RecomendacaoSerializer
     list_serializer_class = RecomendacaoSerializer
     detail_serializer_class = DetalheRecomendacaoSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticated,
+                          PermissaoRecomendacao)
 
     def perform_create(self, serializer):
-        serializer.save(autor=self.request.user.usuario)
+        serializer.save(autor=self.request.user.usuario,
+                        data_criacao=datetime.now())
 
     def dispatch(self, request, pk=None):
         self.pk = pk
         return super(RecomendacaoViewSet, self).dispatch(request, pk=pk)
 
     def get_queryset(self):        
-        super(RecomendacaoViewSet, self).get_queryset()
-        return self.request.user.usuario.recomendacoes.all()
+        if not self.pk:
+            return self.request.user.usuario.recomendacoes.all()
+        return super(RecomendacaoViewSet, self).get_queryset()
 
     def get_serializer_class(self):
         return self.list_serializer_class \
@@ -112,17 +121,17 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
                 permissions.IsAuthenticated,
             ])
     def sugerir_diario(self, request, pk=None):
+        from IPython import embed;embed()
         recomendacao = self.get_object()
-        serializer = self.detail_serializer_class(data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            recomendacao.diarios = serializer.validated_data['diarios']
-            recomendacao.save()
-            resposta = 'Sucesso! A sugestão foi salva. '
-            status_resposta = status.HTTP_200_OK
-            return Response(resposta, status=status_resposta)
+        recomendacao.diarios = request.data['diarios']
+        recomendacao.save()
+        resposta = 'Sucesso! A sugestão foi salva. '
+        status_resposta = status.HTTP_200_OK
+        return Response(resposta, status=status_resposta)
 
 
-class CadastroViewSet(viewsets.ModelViewSet):
+class CadastroViewSet(mixins.CreateModelMixin,
+                      viewsets.GenericViewSet):
     """
     Viewset para cadastrar um novo usuário
     """
@@ -132,13 +141,10 @@ class CadastroViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Faz o username ser igual ao email
         # para facilitar o login, que requer username
-        try:
-            username = serializer.validated_data['email']
-            instance = serializer.save(username=username)
-            instance.set_password(instance.password)
-            instance.save()
-        except IntegrityError:
-            raise SuspiciousOperation('Este e-mail já está sendo utilizado.')
+        username = serializer.validated_data['email']
+        instance = serializer.save(username=username)
+        instance.set_password(instance.password)
+        instance.save()
 
 
 class PerfilViewSet(viewsets.ModelViewSet):
@@ -163,7 +169,7 @@ class PerfilViewSet(viewsets.ModelViewSet):
         except Relacionamento.DoesNotExist:
             instance.me_segue = False
 
-        return Response(self.detail_serializer_class(instance=instance).data,
+        return Response(self.detail_serializer_class(instance=instance, context={"request":request}).data,
                         status=status.HTTP_200_OK)
 
 
@@ -215,7 +221,8 @@ class DiarioViewSet(viewsets.ModelViewSet):
     queryset = Diario.objects
     list_serializer_class = DiarioSerializer
     detail_serializer_class = DetalheDiarioSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticated, 
+                          PermissaoDiario)
 
     def perform_create(self, serializer):
         serializer.save(autor=self.request.user.usuario)
@@ -225,8 +232,9 @@ class DiarioViewSet(viewsets.ModelViewSet):
         return super(DiarioViewSet, self).dispatch(request, pk=pk)
 
     def get_queryset(self):
-        queryset = super(DiarioViewSet, self).get_queryset()
-        return queryset.filter(autor=self.request.user.usuario)
+        if not self.pk:
+            return self.queryset.filter(autor=self.request.user.usuario)
+        return super(DiarioViewSet, self).get_queryset()
 
     def get_serializer_class(self):
         return self.list_serializer_class \
@@ -250,7 +258,6 @@ class LocalViewSet(viewsets.ModelViewSet):
     queryset = LocalDeInteresse.objects
     list_serializer_class = LocalDeInteresseSerializer
     detail_serializer_class = LocalDeInteresseSerializer
-    #permission_classes = permissions.IsAuthenticated
 
     def dispatch(self, request, pk=None):
         self.pk = pk
@@ -264,7 +271,8 @@ class LocalViewSet(viewsets.ModelViewSet):
 class FeedViewSet(viewsets.ViewSet):
     def list(self, request):
         dados = { 'recomendacoes': [] }
-        for grupo in request.user.usuario.grupo_set.all():
+        grupos = Grupo.objects.filter(membros__id=self.request.user.usuario.id)
+        for grupo in grupos:
             for recomendacao in grupo.recomendacao_set.all():
                 dados['recomendacoes'].append(recomendacao)
         dados_serializados = FeedSerializer(dados).data
