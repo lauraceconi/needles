@@ -119,7 +119,7 @@ class DetalheRecomendacaoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recomendacao
-        fields = ('id', 'autor', 'descricao', 'grupos', 'seguidores', 'diarios', 'data_criacao')
+        fields = ('id', 'autor', 'descricao', 'grupos', 'seguidores', 'diarios')
 
 
 class DetalheGrupoSerializer(serializers.ModelSerializer):
