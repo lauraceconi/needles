@@ -45,7 +45,6 @@ class Recomendacao(models.Model):
     grupos = models.ManyToManyField('Grupo')
     seguidores = models.BooleanField(default=True)
     diarios = models.ManyToManyField('Diario', blank=True)
-    data_criacao = models.DateTimeField(blank=True, null=True)
 
     def __unicode__(self):
         return self.descricao
