@@ -98,8 +98,7 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
                           PermissaoRecomendacao)
 
     def perform_create(self, serializer):
-        serializer.save(autor=self.request.user.usuario,
-                        data_criacao=datetime.now())
+        serializer.save(autor=self.request.user.usuario)
 
     def dispatch(self, request, pk=None):
         self.pk = pk
