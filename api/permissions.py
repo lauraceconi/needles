@@ -37,12 +37,15 @@ class PermissaoRecomendacao(permissions.BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        grupos_recomendacao = obj.grupos.all()
-        grupos_usuario = Grupo.objects.filter(
-            membros__id=request.user.usuario.id
-        )
-        for grupo in grupos_recomendacao:
-            return grupo in grupos_usuario
+        if obj.autor == request.user.usuario:
+            return True
+        else:
+            grupos_recomendacao = obj.grupos.all()
+            grupos_usuario = Grupo.objects.filter(
+                membros__id=request.user.usuario.id
+            )
+            for grupo in grupos_recomendacao:
+                return grupo in grupos_usuario
         
 class PermissaoDiario(permissions.BasePermission):
     """
@@ -51,9 +54,12 @@ class PermissaoDiario(permissions.BasePermission):
     associado esse diário
     """
     def has_object_permission(self, request, view, obj):
-        grupos_usuario = Grupo.objects.filter(
-            membros__id=request.user.usuario.id
-        )
-        for recomendacao in obj.recomendacao_set.all():
-            for grupo in recomendacao.grupos.all():
-                return grupo in grupos_usuario
+        if obj.autor == request.user.usuario:
+            return True
+        else:
+            grupos_usuario = Grupo.objects.filter(
+                membros__id=request.user.usuario.id
+            )
+            for recomendacao in obj.recomendacao_set.all():
+                for grupo in recomendacao.grupos.all():
+                    return grupo in grupos_usuario
