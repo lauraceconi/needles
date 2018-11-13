@@ -167,8 +167,12 @@ class PerfilViewSet(viewsets.ModelViewSet):
         except Relacionamento.DoesNotExist:
             instance.me_segue = False
 
-        return Response(self.detail_serializer_class(instance=instance, context={"request":request}).data,
-                        status=status.HTTP_200_OK)
+        return Response(
+            self.detail_serializer_class(
+                instance=instance, 
+                context = { 'request': request }
+            ).data,
+            status=status.HTTP_200_OK)
 
 
 class RelacionamentoViewSet(viewsets.ModelViewSet):
@@ -273,7 +277,10 @@ class FeedViewSet(viewsets.ViewSet):
         for grupo in grupos:
             for recomendacao in grupo.recomendacao_set.all():
                 dados['recomendacoes'].append(recomendacao)
-        dados_serializados = FeedSerializer(dados).data
+        dados_serializados = FeedSerializer(
+            dados, 
+            context = { 'request': request }
+        ).data
         return Response(
             dados_serializados['recomendacoes'], 
             status=status.HTTP_200_OK
