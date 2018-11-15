@@ -45,7 +45,9 @@ class PermissaoRecomendacao(permissions.BasePermission):
                 membros__id=request.user.usuario.id
             )
             for grupo in grupos_recomendacao:
-                return grupo in grupos_usuario
+                if grupo in grupos_usuario:
+                    return True
+            return False
         
 class PermissaoDiario(permissions.BasePermission):
     """
